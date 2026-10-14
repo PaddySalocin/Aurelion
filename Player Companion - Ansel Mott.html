@@ -464,6 +464,7 @@ var KEY='ravel.ansel.v1';
 var D={
   name:'Ansel Mott', cls:'Hacker', rank:2,
   base:{STR:11,DEF:9,MAG:7,RES:8,FIN:10,SPD:9,LCK:7},
+  stellium:{STR:1,MAG:2,RES:3},
   baseHP:19, baseMP:5, baseTP:12,
   inventory:[
     {id:'i1',n:'Plasteel Tech Rig',d:'Military \u00b7 Rank 3',slot:'hand',rank:3,pow:6,dmg:'1d8',str:2,mag:2,
@@ -550,7 +551,7 @@ function eq(slot){
 }
 function tot(){
   var g={hand:eq('hand'),armor:eq('armor'),helm:eq('helm'),
-         boots:eq('boots'),gloves:eq('gloves'),accessory:eq('accessory')}, o={};
+         boots:eq('boots'),gloves:eq('gloves'),accessory:eq('accessory')}, o={}, st=S.stellium||{};
   var wStr=g.hand?n(g.hand.str):0, wMag=g.hand?n(g.hand.mag):0;
   o.STR=S.base.STR+wStr+(g.gloves?n(g.gloves.str):0)+(g.accessory?n(g.accessory.str):0);
   o.DEF=S.base.DEF+(g.armor?n(g.armor.def):0)+(g.helm?n(g.helm.def):0);
@@ -561,6 +562,7 @@ function tot(){
   o.SPD=S.base.SPD-(g.armor?n(g.armor.spd):0)+(g.boots?n(g.boots.spd):0)
         +(g.gloves?n(g.gloves.spd):0)+(g.accessory?n(g.accessory.spd):0);
   o.LCK=S.base.LCK+(g.boots?n(g.boots.lck):0)+(g.accessory?n(g.accessory.lck):0);
+  ['STR','DEF','MAG','RES','FIN','SPD','LCK'].forEach(function(k){ o[k]+=n(st[k]); });
   o.HPMAX=S.baseHP+(g.armor?n(g.armor.hp):0);
   o.MPMAX=S.baseMP+(g.helm?n(g.helm.mp):0);
   o.TPMAX=S.baseTP;
@@ -798,7 +800,7 @@ function vStats(){
   [['Strength','STR'],['Defense','DEF'],['Magic','MAG'],['Resistance','RES'],
    ['Finesse','FIN'],['Speed','SPD'],['Luck','LCK']].forEach(function(p){
     h+='<div class="at"><span class="k">'+p[0]+'</span><span class="n">'+T[p[1]]+'</span>'+
-       calc(S.base[p[1]],src[p[1]])+'</div>';
+       calc(S.base[p[1]],src[p[1]].concat([[n((S.stellium||{})[p[1]]),'Stellium']]))+'</div>';
   });
   h+='<div class="at"><span class="k">Crit Bonus</span><span class="n">'+T.CRIT+'%</span>'+
        calc(0,[[g.gloves?n(g.gloves.crit):0,'Gloves'],[g.accessory?n(g.accessory.crit):0,'Accessory']])+'</div>'+
